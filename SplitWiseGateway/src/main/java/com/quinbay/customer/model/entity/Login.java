@@ -21,29 +21,28 @@ public class Login {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long userId;
 
-    @Column(name = FieldNames.PHONE_NUMBER)
+    @Column(name = FieldNames.PHONE_NUMBER ,nullable = false)
     private String phoneNumber;
 
-    @Column(name = FieldNames.PASSWORD)
+    @Column(name = FieldNames.PASSWORD , nullable = false)
     private String userPassword;
 
-    @Column(name = FieldNames.VALIDITY)
-    private boolean validity;
-
-    @Column(name = FieldNames.TOKEN)
-    private String token;
-
-    @Column(name = FieldNames.CREATED_BY)
+    @Column(name = FieldNames.CREATED_BY , nullable = false)
     private long createdBy;
 
     @Column(name = FieldNames.UPDATED_BY)
     private long updatedBy;
 
-    @Column(name = FieldNames.CREATED_DATE)
+    @Column(name = FieldNames.CREATED_DATE , nullable = false)
     private Date createdDate;
 
     @Column(name = FieldNames.UPDATED_DATE)
     private Date updatedDate;
+
+    @Column(name = FieldNames.TOKEN)
+    private String token;
+
+
 
     public String getToken() {
         return token;
@@ -76,10 +75,6 @@ public class Login {
     public void setUserPassword(String userPassword) {
         this.userPassword = userPassword;
     }
-
-    public boolean isValidity() { return validity; }
-
-    public void setValidity(boolean validity) { this.validity = validity; }
 
     public long getCreatedBy() {
         return createdBy;

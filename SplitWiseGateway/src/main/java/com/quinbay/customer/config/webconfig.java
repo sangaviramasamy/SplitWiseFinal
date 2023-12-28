@@ -1,6 +1,6 @@
 package com.quinbay.customer.config;
 
-import com.quinbay.customer.controller.LoginController;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,11 +11,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 
 @Configuration
-    public class webconfig implements WebMvcConfigurer {
-
-
-    @Autowired
-    LoginController loginController;
+@CrossOrigin(origins="*")
+    public class webconfig{
 
         @Bean
         public RestTemplate getRestTemplate()
@@ -23,10 +20,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
             return new RestTemplate();
         }
 
-        @Override
-        public void addInterceptors(InterceptorRegistry registry) {
-            registry.addInterceptor(loginController).addPathPatterns("*");
-        }
     }
 
 

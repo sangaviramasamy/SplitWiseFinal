@@ -1,11 +1,29 @@
 package com.quinbay.customer.model.vo;
 
-public class Response {
-    private long id;
-    private String status;
-    private String token;  // Add this line
 
-    // Other existing fields and methods...
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+import java.util.List;
+
+//@JsonInclude(JsonInclude.Include.NON_NULL)
+public class Response {
+
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+    private String id;
+    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+    private String status;
+    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+    private String token;
+
+
 
     public String getToken() {
         return token;
@@ -16,17 +34,9 @@ public class Response {
     }
 
     public boolean isSuccess() {
-        // Modify this method based on your logic
         return getStatus().equalsIgnoreCase("success");
     }
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
 
     public String getStatus() {
         return status;
@@ -37,7 +47,11 @@ public class Response {
     }
 
     public boolean getStatusCode() {
-        // Modify this method based on your logic
         return isSuccess();
     }
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private List<String> categoryList;
+
+
 }

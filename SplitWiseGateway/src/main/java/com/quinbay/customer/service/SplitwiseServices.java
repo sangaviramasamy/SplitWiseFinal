@@ -48,4 +48,23 @@ public interface SplitwiseServices {
 
     List<UserExpenseSummary> filterAllCategory(long userId);
 
+    List<GroupVo> filterGroupName(String groupName);
+
+    Response groupSettlement(long userId , long groupId);
+
+    Response nonGroupExpense(ExpenseVo expenseVo);
+
+    String pendingPaymentCheck(long userId , long groupId);
+
+    Response categoryList();
+
+    List<NonGroupExpenseVo> nonGroupPaymentsList(long createdUser , long receiverUser);
+
+    Response addNonGroupExpense(NonGroupExpenseVo nonGroupVo);
+
+    Response payNonGroupExpense(String expenseId, long memberId);
+
+    List<UserVo> filterUserName(String userName);
+
+
 }

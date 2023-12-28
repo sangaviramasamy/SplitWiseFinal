@@ -1,10 +1,22 @@
 package com.quinbay.customer.model.vo;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+import java.util.List;
+
 public class UserExpenseSummary {
     private double totalToReceive;
     private double totalToPay;
+    private double totalAmountSpent;
+    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     private String category;
+    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     private String groupId;
+
+    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+    private List<NetPaymentSummary> paymentSummaryList;
+    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+    private List<GroupPaymentSummary> groupSummaryList;
 
     public UserExpenseSummary(){}
 
@@ -21,9 +33,7 @@ public class UserExpenseSummary {
         return totalToPay;
     }
 
-    public String getCategory() {
-        return category;
-    }
+    public String getCategory() { return category; }
 
     public void setCategory(String category) {
         this.category = category;
@@ -44,4 +54,17 @@ public class UserExpenseSummary {
     public void setTotalToPay(double totalToPay) {
         this.totalToPay = totalToPay;
     }
+
+    public List<NetPaymentSummary> getPaymentSummaryList() { return paymentSummaryList; }
+
+    public void setPaymentSummaryList(List<NetPaymentSummary> paymentSummaryList) { this.paymentSummaryList = paymentSummaryList; }
+
+    public List<GroupPaymentSummary> getGroupSummaryList() { return groupSummaryList; }
+
+    public void setGroupSummaryList(List<GroupPaymentSummary> groupSummaryList) { this.groupSummaryList = groupSummaryList; }
+
+    public double getTotalAmountSpent() { return totalAmountSpent; }
+
+    public void setTotalAmountSpent(double totalAmountSpent) { this.totalAmountSpent = totalAmountSpent; }
+
 }

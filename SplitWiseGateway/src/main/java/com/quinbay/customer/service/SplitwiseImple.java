@@ -1,6 +1,6 @@
 package com.quinbay.customer.service;
 
-import com.quinbay.customer.jwtUtil.JwtUtil;
+
 import com.quinbay.customer.model.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -22,8 +22,8 @@ public class SplitwiseImple implements SplitwiseServices{
     RestTemplate restTemplate;
 
 
-    private static final String Group = "http://127.0.0.1:8081/httpmethod";
-    String Notification = "http://127.0.0.1:8085/httpmethod";
+    private static final String Group = "http://localhost:8081/httpmethod";
+    String Notification = "http://localhost:8085/httpmethod";
     String Expense = "http://localhost:8089/httpmethod";
 
     public static final String LOGOUTURL = Group + "/logout";
@@ -33,18 +33,49 @@ public class SplitwiseImple implements SplitwiseServices{
         HttpHeaders headers = createHttpHeaders();
         HttpEntity<LoginVo> entity = new HttpEntity<>(loginVo, headers);
         Response responseEntity  = restTemplate.exchange(Group +"/login",HttpMethod.POST,entity,Response.class).getBody();
+        return new ResponseEntity<Response>(responseEntity,HttpStatus.OK);
 
-        if (responseEntity.getToken() != null) {
-            String token = responseEntity.getToken();
-            System.out.println(token);
-            HttpHeaders responseHeaders = new HttpHeaders();
-            responseHeaders.add("Set-Cookie", "uid=" + token + "; Max-Age=" + "; HttpOnly; Path=/");
-            return new ResponseEntity<Response>(responseEntity,responseHeaders ,HttpStatus.OK);
-        }else {
-            System.out.println("Inside else");
-            return new ResponseEntity<Response>(responseEntity, HttpStatus.UNAUTHORIZED);
+//        if (responseEntity.getToken() != null) {
+//            String token = responseEntity.getToken();
+//            System.out.println(token);
+//            HttpHeaders responseHeaders = new HttpHeaders();
+//            responseHeaders.add("Set-Cookie", "uid=" + token + "; Max-Age=" + "; HttpOnly; Path=/");
+//            return new ResponseEntity<Response>(responseEntity,responseHeaders ,HttpStatus.OK);
+//        }else {
+//            System.out.println("Inside else");
+//            return new ResponseEntity<Response>(responseEntity, HttpStatus.UNAUTHORIZED);
+//
+//        }
 
-        }
+    }
+
+    public List<GroupVo> filterGroupName(String groupName){
+        HttpHeaders headers = createHttpHeaders();
+        HttpEntity<List<GroupVo>> entity = new HttpEntity<>(headers);
+        UriComponents builder = UriComponentsBuilder.fromHttpUrl(Group +"/filter-group/{groupName}").buildAndExpand(groupName);
+        return restTemplate.exchange(builder.toUriString(),HttpMethod.GET,entity,List.class).getBody();
+
+    }
+
+    public List<UserVo> filterUserName(String userName){
+        HttpHeaders headers = createHttpHeaders();
+        HttpEntity<List<UserVo>> entity = new HttpEntity<>(headers);
+        UriComponents builder = UriComponentsBuilder.fromHttpUrl(Group +"/filter-user/{userName}").buildAndExpand(userName);
+        return restTemplate.exchange(builder.toUriString(),HttpMethod.GET,entity,List.class).getBody();
+    }
+
+    public Response groupSettlement(long userId , long groupId){
+        HttpHeaders headers = createHttpHeaders();
+        HttpEntity entity = new HttpEntity<>(headers);
+        UriComponents builder = UriComponentsBuilder.fromHttpUrl(Expense +"/settlement/{userId}/{groupId}").buildAndExpand(userId,groupId);
+        return restTemplate.exchange(builder.toUriString(),HttpMethod.PUT,entity,Response.class).getBody();
+    }
+
+    public Response nonGroupExpense(ExpenseVo expenseVo){
+        HttpHeaders headers = createHttpHeaders();
+        HttpEntity<ExpenseVo> entity = new HttpEntity<>(expenseVo, headers);
+        UriComponents builder = UriComponentsBuilder.fromHttpUrl(Expense +"/non-group-expense").build();
+        return restTemplate.exchange(builder.toUriString(),HttpMethod.POST,entity,Response.class).getBody();
 
     }
 
@@ -116,6 +147,14 @@ public class SplitwiseImple implements SplitwiseServices{
         return restTemplate.exchange(builder.toUriString(),HttpMethod.GET,entity,List.class).getBody();
     }
 
+    public String pendingPaymentCheck(long userId , long groupId){
+        HttpHeaders headers = createHttpHeaders();
+        HttpEntity entity = new HttpEntity<>(headers);
+        UriComponents builder = UriComponentsBuilder.fromHttpUrl(Expense +"/payment-pending/{userId}/{groupId}").buildAndExpand(userId,groupId);
+        return restTemplate.exchange(builder.toUriString(),HttpMethod.GET,entity,String.class).getBody();
+
+    }
+
 
     public Response addNotification(NotificationVo notificationVo){
 
@@ -135,6 +174,12 @@ public class SplitwiseImple implements SplitwiseServices{
         HttpHeaders headers = createHttpHeaders();
         HttpEntity<ExpenseVo> entity = new HttpEntity<>(expenseVo, headers);
         return restTemplate.exchange(Expense +"/add/expense",HttpMethod.POST,entity,Response.class).getBody();
+    }
+
+    public Response categoryList(){
+        HttpHeaders headers = createHttpHeaders();
+        HttpEntity entity = new HttpEntity<>(headers);
+        return restTemplate.exchange(Expense +"/category-list",HttpMethod.GET,entity,Response.class).getBody();
     }
 
     public Response userPayment(String expenseId, long userId) {
@@ -182,14 +227,33 @@ public class SplitwiseImple implements SplitwiseServices{
     }
 
     public List<ExpenseVo> filterByUserIdAndCategory(long userId, String category) {
-
-
         HttpHeaders headers = createHttpHeaders();
         HttpEntity entity = new HttpEntity<>(headers);
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(Expense + "/filter-user-category")
                 .queryParam("userId", userId)
                 .queryParam("category", category);
         return restTemplate.exchange(builder.toUriString(),HttpMethod.GET,entity,List.class).getBody();
+    }
+
+    public List<NonGroupExpenseVo> nonGroupPaymentsList(long createdUser , long receiverUser){
+        HttpHeaders headers = createHttpHeaders();
+        HttpEntity<List<NonGroupExpenseVo>> entity = new HttpEntity<>(headers);
+        UriComponents builder = UriComponentsBuilder.fromHttpUrl(Expense + "/non-group-expenses/{createdUser}/{receiverUser}").buildAndExpand(createdUser,receiverUser);
+        return restTemplate.exchange(builder.toUriString(),HttpMethod.GET,entity,List.class).getBody();
+
+    }
+
+    public Response addNonGroupExpense(NonGroupExpenseVo nonGroupVo){
+        HttpHeaders headers = createHttpHeaders();
+        HttpEntity<NonGroupExpenseVo> entity = new HttpEntity<>(nonGroupVo, headers);
+        return restTemplate.exchange(Expense +"/add/non-group-expense",HttpMethod.POST,entity,Response.class).getBody();
+    }
+
+    public Response payNonGroupExpense(String expenseId, long memberId){
+        HttpHeaders headers = createHttpHeaders();
+        HttpEntity entity = new HttpEntity<>(headers);
+        UriComponents builder = UriComponentsBuilder.fromHttpUrl(Expense +"/non-group-pay/{expenseId}/{memberId}").buildAndExpand(expenseId,memberId);
+        return restTemplate.exchange(builder.toUriString(),HttpMethod.PUT,entity,Response.class).getBody();
     }
 
 
